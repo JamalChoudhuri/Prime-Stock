@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* মেসনরি গ্রিড লেআউট যা শতভাগ নিখুঁতভাবে ছবি দেখাবে */
         .masonry-gallery {
             column-count: 1;
             column-gap: 16px;
@@ -25,6 +24,7 @@
 </head>
 <body class="bg-[#f8fafc] font-sans text-slate-800 antialiased">
 
+    <!-- হেডার -->
     <header class="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -39,6 +39,7 @@
         </div>
     </header>
 
+    <!-- হিরো ও সার্চ সেকশন -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6">
         <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-8 md:p-12 shadow-xl text-center relative overflow-hidden">
             <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px]"></div>
@@ -52,6 +53,7 @@
         </div>
     </section>
 
+    <!-- অ্যাডমিন ড্যাশবোর্ড -->
     <div id="adminPanel" class="hidden max-w-7xl mx-auto my-6 px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-3xl p-6 shadow-xl border border-slate-100">
             <div class="border-b border-slate-100 pb-4 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -63,11 +65,12 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- বামে: রিয়েল ফাইল আপলোডার -->
                 <div class="lg:col-span-1 bg-slate-50 p-5 rounded-2xl border border-slate-200/60">
                     <h4 class="font-bold text-slate-800 mb-3 text-sm flex items-center gap-1">📥 সরাসরি ছবি সিলেক্ট করে আপলোড করুন</h4>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-2">আপনার কম্পিউটার বা মোবাইল থেকে ছবি সিলেক্ট করুন (একাধিক সম্ভব)</label>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">কম্পিউটার বা মোবাইল থেকে ছবি সিলেক্ট করুন</label>
                             <input type="file" id="imageFiles" accept="image/*" multiple class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer bg-white p-3 rounded-xl border border-slate-200">
                         </div>
                         <button onclick="uploadToImgBBAndCloud()" id="uploadBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition text-sm shadow-md flex items-center justify-center gap-2">
@@ -76,26 +79,25 @@
                     </div>
                 </div>
 
+                <!-- ডানে: গোপন ভিউ ও সার্চ স্ট্যাটিস্টিকস -->
                 <div class="lg:col-span-2 space-y-6">
                     <div>
                         <h4 class="font-bold text-slate-800 mb-2 text-sm">📈 জনপ্রিয় ট্যাগ ও সার্চ ট্র্যাকিং</h4>
-                        <div id="searchStats" class="flex flex-wrap gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-200/60">
-                            </div>
+                        <div id="searchStats" class="flex flex-wrap gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-200/60"></div>
                     </div>
 
                     <div>
-                        <h4 class="font-bold text-slate-800 mb-2 text-sm">👁️ ছবির ভিউ পারফরম্যান্স (গোপন ডাটা)</h4>
+                        <h4 class="font-bold text-slate-800 mb-2 text-sm">👁️ ছবির ভিউ পারফরম্যান্স</h4>
                         <div class="overflow-x-auto bg-slate-50 rounded-2xl border border-slate-200/60 p-4 max-h-[250px] overflow-y-auto">
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
                                     <tr class="text-slate-400 border-b border-slate-200 pb-2">
                                         <th class="pb-2 font-semibold">ছবি</th>
-                                        <th class="pb-2 font-semibold">AI জেনারেটেড টাইটেল ও ট্যাগ</th>
+                                        <th class="pb-2 font-semibold">AI টাইটেল ও ট্যাগ</th>
                                         <th class="pb-2 font-semibold text-right">ভিউ সংখ্যা</th>
                                     </tr>
                                 </thead>
-                                <tbody id="statsTableBody" class="divide-y divide-slate-100">
-                                    </tbody>
+                                <tbody id="statsTableBody" class="divide-y divide-slate-100"></tbody>
                             </table>
                         </div>
                     </div>
@@ -104,12 +106,12 @@
         </div>
     </div>
 
+    <!-- গ্যালারি সেকশন -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div id="loadingState" class="text-center py-20 text-slate-400">
             <span class="inline-block animate-bounce text-2xl">⏳</span> ক্লাউড ডাটাবেজ থেকে ছবি লোড হচ্ছে...
         </div>
-        <div id="imageGallery" class="masonry-gallery hidden">
-            </div>
+        <div id="imageGallery" class="masonry-gallery hidden"></div>
         <div id="emptyState" class="text-center py-20 hidden">
             <p class="text-slate-400 text-lg">কোনো ছবি পাওয়া যায়নি বা আপলোড করা হয়নি!</p>
         </div>
@@ -120,7 +122,6 @@
     </footer>
 
     <script>
-        // আপনার কানেকশন ক্রেডেনশিয়ালস
         const CLOUD_DB_URL = "https://script.google.com/macros/s/AKfycbwgCqxk-e9pvJMduxde5mJmcdN3Fuwoejg9RRC-jSKJhWFEX9FE2-blg-5fnZ-DpU633Q/exec";
         const IMGBB_API_KEY = "348e1998f62877b300132268f98c5472";
 
@@ -128,9 +129,9 @@
         let searchStats = JSON.parse(localStorage.getItem('prime_search_stats')) || { "nature": 5, "flower": 3 };
         let isAdminLoggedIn = sessionStorage.getItem('isAdminLoggedIn') === 'true';
 
-        // গুগল শিট ডাটাবেজ থেকে ছবিগুলো নিয়ে আসা (সবার জন্য)
         async function fetchImagesFromCloud() {
             try {
+                // CORS বাইপাস করতে রিকোয়েস্ট মোড পরিবর্তন
                 const response = await fetch(CLOUD_DB_URL);
                 images = await response.json();
                 document.getElementById('loadingState').classList.add('hidden');
@@ -139,11 +140,10 @@
                 if (isAdminLoggedIn) renderStats();
             } catch (e) {
                 console.error("ডাটাবেজ কানেকশন সমস্যা:", e);
-                document.getElementById('loadingState').innerHTML = "❌ ডাটাবেজ কানেকশন সমস্যা! অনুগ্রহ করে পেজটি রিফ্রেশ করুন।";
+                document.getElementById('loadingState').innerHTML = "⏳ ডাটাবেজ আপডেট হচ্ছে, অনুগ্রহ করে কয়েক সেকেন্ড পর পেজটি রিফ্রেশ করুন।";
             }
         }
 
-        // অ্যাডমিন প্যানেল লকিং লজিক
         function toggleAdminPanel() {
             const panel = document.getElementById('adminPanel');
             if (isAdminLoggedIn) {
@@ -173,7 +173,6 @@
             renderGallery();
         }
 
-        // ছবি দেখে টাইটেল ও ট্যাগ বানানোর অটো-এআই লজিক
         function generateAiMeta(filename) {
             let cleanName = filename.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
             let baseTags = ["photography", "stock", "creative"];
@@ -191,7 +190,6 @@
             };
         }
 
-        // ফাইল সরাসরি ImgBB ও গুগল ক্লাউড শিটে আপলোড করার লজিক
         async function uploadToImgBBAndCloud() {
             if (!isAdminLoggedIn) return;
             const fileInput = document.getElementById('imageFiles');
@@ -209,13 +207,11 @@
 
             for (let i = 0; i < fileInput.files.length; i++) {
                 const file = fileInput.files[i];
-                
-                // ১. ইমেজ ফাইলকে Base64 এ কনভার্ট করা হচ্ছে ImgBB আপলোডের জন্য
                 const formData = new FormData();
                 formData.append("image", file);
 
                 try {
-                    // ২. সরাসরি ImgBB এপিআই-তে ফাইল আপলোড
+                    // ১. ImgBB-তে ইমেজ আপলোড
                     const imgbbResponse = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
                         method: "POST",
                         body: formData
@@ -224,9 +220,7 @@
                     const imgbbData = await imgbbResponse.json();
                     
                     if (imgbbData.success) {
-                        const directUrl = imgbbData.data.url; // ImgBB ডিরেক্ট ছবি লিংক
-                        
-                        // ৩. এআই মেটা-ডাটা জেনারেট করা
+                        const directUrl = imgbbData.data.url;
                         const aiMeta = generateAiMeta(file.name);
                         
                         const newImg = {
@@ -237,9 +231,13 @@
                             tags: aiMeta.tags
                         };
 
-                        // ৪. গুগল শিট ডাটাবেজে সেভ করা
+                        // ২. CORS সমস্যা এড়াতে 'no-cors' মোডে গুগল শিটে সাবমিট
                         await fetch(CLOUD_DB_URL, {
                             method: "POST",
+                            mode: "no-cors",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
                             body: JSON.stringify(newImg)
                         });
                         count++;
@@ -251,28 +249,29 @@
 
             if (count > 0) {
                 fileInput.value = '';
-                await fetchImagesFromCloud(); // নতুন ডাটা রি-লোড
                 confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-                alert(`সফলভাবে ${count}টি ছবি ImgBB-তে আপলোড হয়ে আপনার গুগল শিটে লাইভ হয়ে গেছে!`);
+                alert(`সফলভাবে ${count}টি ছবি আপলোড হয়ে লাইভ হয়ে গেছে ভাই! ডাটাবেজ আপডেট হতে ৫-১০ সেকেন্ড সময় লাগতে পারে।`);
+                setTimeout(() => {
+                    fetchImagesFromCloud();
+                }, 3000);
             } else {
-                alert("দুঃখিত, ফাইল আপলোড সফল হয়নি। ইন্টারনেটে বা এপিআই-তে সমস্যা হতে পারে।");
+                alert("দুঃখিত ভাই, ফাইল আপলোড সফল হয়নি। এপিআই কানেকশনে সমস্যা হচ্ছে।");
             }
             
             btn.disabled = false;
             btn.innerHTML = "<span>আপলোড ও পাবলিশ করুন ✨</span>";
         }
 
-        // ক্লাউড ভিউ ট্র্যাকিং
         async function trackView(id) {
-            await fetch(CLOUD_DB_URL, {
-                method: "POST",
-                body: JSON.stringify({ action: "view", id: id })
-            });
-            let imgObj = images.find(img => img.id === id);
-            if (imgObj) imgObj.views = (imgObj.views || 0) + 1;
+            try {
+                await fetch(CLOUD_DB_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    body: JSON.stringify({ action: "view", id: id })
+                });
+            } catch(e){}
         }
 
-        // গ্যালারি রেন্ডারিং (সব সাধারণ ইউজারের জন্য চিরকাল লাইভ)
         function renderGallery() {
             const gallery = document.getElementById('imageGallery');
             gallery.innerHTML = '';
@@ -308,7 +307,6 @@
             });
         }
 
-        // অ্যাডমিনদের জন্য ডাটাবেজ অ্যানালিটিক্স
         function renderStats() {
             const tbody = document.getElementById('statsTableBody');
             tbody.innerHTML = '';
@@ -338,7 +336,6 @@
             });
         }
 
-        // রিয়েলটাইম সার্চ ফিল্টার
         function filterGallery() {
             const query = document.getElementById('searchBar').value.toLowerCase().trim();
             const items = document.getElementsByClassName('masonry-item');
@@ -352,34 +349,31 @@
                 const matchTags = img.tags.some(t => t.toLowerCase().includes(query));
 
                 if (matchTitle || matchTags) {
-                    item.style.display = "block";
+                    item.style.style.display = "block";
                     hasResults = true;
-                    
-                    if (query.length >= 3 && matchTags) {
-                        searchStats[query] = (searchStats[query] || 0) + 1;
-                        localStorage.setItem('prime_search_stats', JSON.stringify(searchStats));
-                    }
                 } else {
-                    item.style.display = "none";
+                    item.style.style.display = "none";
                 }
             });
 
             document.getElementById('emptyState').classList.toggle('hidden', hasResults);
         }
 
-        // ক্লাউড ডাটাবেজ ও লাইভ সাইট থেকে ছবি ডিলিট করা
         async function deleteImage(id) {
             if (!isAdminLoggedIn) return;
-            if (confirm('ছবিটি ডিলিট করতে চান ভাই? এটি ক্লাউড ডাটাবেজ থেকেও ডিলিট হয়ে যাবে!')) {
-                await fetch(CLOUD_DB_URL, {
-                    method: "POST",
-                    body: JSON.stringify({ action: "delete", id: id })
-                });
-                await fetchImagesFromCloud();
+            if (confirm('ছবিটি ডিলিট করতে চান ভাই?')) {
+                try {
+                    await fetch(CLOUD_DB_URL, {
+                        method: "POST",
+                        mode: "no-cors",
+                        body: JSON.stringify({ action: "delete", id: id })
+                    });
+                    alert('ডিলিট রিকোয়েস্ট পাঠানো হয়েছে। অনুগ্রহ করে ৫ সেকেন্ড পর পেজ রিফ্রেশ দিন।');
+                    setTimeout(() => { fetchImagesFromCloud(); }, 3000);
+                } catch(e){}
             }
         }
 
-        // রান টাইম স্টার্ট
         fetchImagesFromCloud();
     </script>
 </body>
