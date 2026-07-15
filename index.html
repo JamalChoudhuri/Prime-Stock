@@ -6,6 +6,21 @@
     <title>Prime Stock - Royalty-Free Photos</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* মেসনরি লেআউটের জন্য কাস্টম স্টাইল (ছবির সাইজ অনুযায়ী জায়গা নেবে) */
+        .masonry-gallery {
+            column-count: 1;
+            column-gap: 1.5rem;
+        }
+        @media (min-width: 640px) { .masonry-gallery { column-count: 2; } }
+        @media (min-width: 768px) { .masonry-gallery { column-count: 3; } }
+        @media (min-width: 1024px) { .masonry-gallery { column-count: 4; } }
+        
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+        }
+    </style>
 </head>
 <body class="bg-slate-50 font-sans text-slate-800">
 
@@ -20,14 +35,14 @@
     </header>
 
     <!-- হিরো সেকশন -->
-    <section class="bg-gradient-to-r flow-root from-blue-600 to-indigo-700 text-white text-center py-20 px-4">
+    <section class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white text-center py-20 px-4">
         <div class="max-w-3xl mx-auto">
             <h2 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">রয়্যালটি-ফ্রি চমৎকার সব স্টক ফটো</h2>
-            <p class="text-indigo-100 text-lg">আপনার পরবর্তী প্রজেক্ট, ডিজাইন বা ওয়েবসাইটের জন্য একদম হাই-রেজোলিউশন ইমেজ সম্পূর্ণ বিনামূল্যে ডাউনলোড করুন।</p>
+            <p class="text-indigo-100 text-lg">আপনার পরবর্তী প্রজেক্ট বা ওয়েবসাইটের জন্য হাই-রেজোলিউশন ইমেজ সম্পূর্ণ বিনামূল্যে ডাউনলোড করুন। ছবিতে ক্লিক করলেই মূল ফাইল পেয়ে যাবেন।</p>
         </div>
     </section>
 
-    <!-- অ্যাডমিন প্যানেল (লুকানো থাকবে, বাটনে চাপলে আসবে) -->
+    <!-- অ্যাডমিন প্যানেল (লক করা থাকবে) -->
     <div id="adminPanel" class="hidden max-w-2xl mx-auto my-8 p-6 bg-white rounded-2xl shadow-lg border border-slate-100 mx-4">
         <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">📸 নতুন ছবি যোগ করুন</h3>
         <div class="space-y-4">
@@ -36,9 +51,9 @@
                 <input type="text" id="imgTitle" placeholder="যেমন: সুন্দর সুন্দর ফুল" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
-                <label class="block text-sm font-medium text-slate-600 mb-1">ইমেজ ইউআরএল (Image URL)</label>
-                <input type="text" id="imgUrl" placeholder="https://images.unsplash.com/photo-..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <p class="text-xs text-slate-400 mt-1">Unsplash, Pexels বা যেকোনো লাইভ ছবির লিংক এখানে পেস্ট করুন।</p>
+                <label class="block text-sm font-medium text-slate-600 mb-1">ইমেজ ডিরেক্ট ইউআরএল (Image URL)</label>
+                <input type="text" id="imgUrl" placeholder="https://i.ibb.co/..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <p class="text-xs text-slate-400 mt-1">ImgBB বা অন্য সাইট থেকে নেওয়া ডিরেক্ট লিংক (শেষে .jpg/.png) পেস্ট করুন।</p>
             </div>
             <button onclick="addNewImage()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition shadow-md">
                 সাইটে পাবলিশ করুন ✨
@@ -48,11 +63,10 @@
 
     <!-- গ্যালারি সেকশন -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div id="imageGallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- জাভাস্ক্রিপ্ট দিয়ে এখানে ছবি লোড হবে -->
+        <div id="imageGallery" class="masonry-gallery">
+            <!-- জাভাস্ক্রিপ্ট দিয়ে ছবি লোড হবে -->
         </div>
         
-        <!-- যদি কোনো ছবি না থাকে তার জন্য নোটিশ -->
         <div id="emptyState" class="text-center py-16 hidden">
             <p class="text-slate-400 text-lg">এখনো কোনো ছবি আপলোড করা হয়নি। অ্যাডমিন প্যানেল থেকে প্রথম ছবি যোগ করুন!</p>
         </div>
@@ -65,45 +79,37 @@
 
     <!-- মূল লজিক স্ক্রিপ্ট -->
     <script>
-       // ডিফল্ট কিছু ডেমো ডাটা (যাতে সাইট খালি না দেখায়)
+        // ডেমো ছবি (সাইজ ভিন্ন ভিন্ন বোঝানোর জন্য আলাদা আলাদা আসপেক্ট রেশিও রাখা হয়েছে)
         let defaultImages = [
             { id: 1, title: "প্রকৃতির সৌন্দর্য", url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80" },
-            { id: 2, title: "স্মার্ট সিটি নাইট", url: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80" }
+            { id: 2, title: "স্মার্ট সিটি নাইট (লম্বা ছবি)", url: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=120" },
+            { id: 3, title: "কফি মগ", url: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&auto=format&fit=crop" }
         ];
 
-        // লোকাল স্টোরেজ থেকে ডাটা নেওয়া বা ডিফল্ট ডাটা সেট করা
         let images = JSON.parse(localStorage.getItem('prime_stock_images')) || defaultImages;
-
-        // অ্যাডমিন প্যানেল লক ও আনলক লজিক
         let isAdminLoggedIn = sessionStorage.getItem('isAdminLoggedIn') === 'true';
 
         function toggleAdminPanel() {
             const panel = document.getElementById('adminPanel');
-            
-            // যদি আগে থেকেই লগইন করা থাকে
             if (isAdminLoggedIn) {
                 panel.classList.toggle('hidden');
                 return;
             }
 
-            // প্রথমবার প্যানেলে ঢুকতে গেলে ইউজার আইডি চাইবে
             const userId = prompt("অ্যাডমিন প্যানেলে প্রবেশ করতে ইউজার আইডি (User ID) দিন:");
-            
             if (userId === "1502061267") {
-                // ইউজার আইডি মিললে পাসওয়ার্ড চাইবে
                 const password = prompt("এবার আপনার গোপন পাসওয়ার্ড (Password) দিন:");
-                
                 if (password === "6691Ja") { 
                     isAdminLoggedIn = true;
-                    sessionStorage.setItem('isAdminLoggedIn', 'true'); // ব্রাউজার ট্যাব বন্ধ না হওয়া পর্যন্ত লগইন থাকবে
+                    sessionStorage.setItem('isAdminLoggedIn', 'true');
                     panel.classList.remove('hidden');
                     alert("স্বাগতম ভাই! আপনি সফলভাবে অ্যাডমিন হিসেবে প্রবেশ করেছেন।");
-                    renderGallery(); // ডিলিট বাটনসহ গ্যালারি রিফ্রেশ হবে
+                    renderGallery();
                 } else {
-                    alert("ভুল পাসওয়ার্ড! আপনি এই প্যানেলটি ব্যবহারের অনুমতি পাননি।");
+                    alert("ভুল পাসওয়ার্ড!");
                 }
             } else {
-                alert("ভুল ইউজার আইডি! আবার চেষ্টা করুন।");
+                alert("ভুল ইউজার আইডি!");
             }
         }
 
@@ -122,43 +128,37 @@
 
             images.forEach((img, index) => {
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 border border-slate-100 flex flex-col";
+                card.className = "masonry-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 border border-slate-100 relative group";
                 
-                // যদি এডমিন লগইন থাকে তবেই ডিলিট বাটন দেখাবে
+                // এডমিন লগইন থাকলে ছবির ওপরে একটি ডিলিট বাটন শো করবে
                 const deleteButtonHTML = isAdminLoggedIn 
-                    ? `<button onclick="deleteImage(${index})" class="bg-red-50 hover:bg-red-100 text-red-500 p-2 rounded-xl transition text-sm" title="ডিলিট করুন">🗑️</button>`
+                    ? `<button onclick="event.preventDefault(); event.stopPropagation(); deleteImage(${index})" class="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white p-2.5 rounded-xl transition shadow-md z-10" title="ডিলিট করুন">🗑️</button>`
                     : '';
 
+                // কার্ডের ওপর ক্লিক করলে সরাসরি নতুন ট্যাবে মূল ছবি ওপেন হবে (কোনো ডাউনলোড বাটন ছাড়া)
                 card.innerHTML = `
-                    <div class="relative group overflow-hidden bg-slate-100 aspect-[4/3]">
-                        <img src="${img.url}" alt="${img.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
-                    </div>
-                    <div class="p-4 flex flex-col flex-grow justify-between">
-                        <h4 class="font-bold text-slate-700 text-base mb-3 line-clamp-1">${img.title}</h4>
-                        <div class="flex gap-2">
-                            <a href="${img.url}" target="_blank" download class="flex-1 text-center bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-2 px-4 rounded-xl transition text-sm flex items-center justify-center gap-1">
-                                ⬇️ ডাউনলোড
-                            </a>
-                            ${deleteButtonHTML}
+                    <a href="${img.url}" target="_blank" class="block w-full h-full cursor-zoom-in">
+                        ${deleteButtonHTML}
+                        <div class="overflow-hidden bg-slate-100">
+                            <img src="${img.url}" alt="${img.title}" class="w-full h-auto object-cover group-hover:scale-[1.02] transition duration-300" loading="lazy">
                         </div>
-                    </div>
+                        <div class="p-4 bg-white">
+                            <h4 class="font-bold text-slate-700 text-sm line-clamp-1">${img.title}</h4>
+                        </div>
+                    </a>
                 `;
                 gallery.appendChild(card);
             });
         }
 
-        // নতুন ছবি যোগ করা
         function addNewImage() {
-            if (!isAdminLoggedIn) {
-                alert("দুঃখিত, ছবি আপলোড করতে আগে লগইন করুন!");
-                return;
-            }
+            if (!isAdminLoggedIn) return;
 
             const titleInput = document.getElementById('imgTitle');
             const urlInput = document.getElementById('imgUrl');
 
             if (!titleInput.value || !urlInput.value) {
-                alert('দয়া করে শিরোনাম এবং ছবির সঠিক লিংক দুটিই দিন!');
+                alert('দয়া করে শিরোনাম এবং ছবির সঠিক ডিরেক্ট লিংক দিন!');
                 return;
             }
 
@@ -178,10 +178,8 @@
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
         }
 
-        // ছবি ডিলিট করা
         function deleteImage(index) {
             if (!isAdminLoggedIn) return;
-            
             if (confirm('আপনি কি নিশ্চিত যে এই ছবিটি ডিলিট করতে চান?')) {
                 images.splice(index, 1);
                 localStorage.setItem('prime_stock_images', JSON.stringify(images));
@@ -189,7 +187,6 @@
             }
         }
 
-        // প্রথমবার পেজ লোড হলে গ্যালারি দেখানো
         renderGallery();
     </script>
 </body>
