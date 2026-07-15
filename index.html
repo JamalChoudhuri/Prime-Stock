@@ -3,124 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prime Stock - Free Stock Photos</title>
-    <!-- Tailwind CSS for Beautiful UI -->
+    <title>Prime Stock - Royalty-Free Photos</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 text-slate-950 font-sans">
+<body class="bg-slate-50 font-sans text-slate-800">
 
-    <!-- হেডার বা নেভিগেশন বার -->
-    <header class="bg-white shadow-sm py-5 border-b border-slate-100 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 flex items-center justify-between">
-            <a href="/" class="text-2xl font-extrabold text-blue-600 tracking-wide">Prime<span class="text-slate-800">Stock</span></a>
-            <a href="/admin/" class="text-sm font-semibold text-slate-500 hover:text-blue-600 border border-slate-200 hover:border-blue-500 rounded-lg px-4 py-2 transition duration-300">
-                অ্যাডমিন প্যানেল
-            </a>
+    <!-- হেডার/নেভিগেশন -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <h1 class="text-2xl font-black text-blue-600 tracking-tight">PrimeStock</h1>
+            <button onclick="toggleAdminPanel()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-4 rounded-xl transition text-sm">
+                🛠️ অ্যাডমিন প্যানেল
+            </button>
         </div>
     </header>
 
     <!-- হিরো সেকশন -->
-    <section class="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 text-white py-20 text-center px-4">
+    <section class="bg-gradient-to-r flow-root from-blue-600 to-indigo-700 text-white text-center py-20 px-4">
         <div class="max-w-3xl mx-auto">
-            <h2 class="text-4xl sm:text-5xl font-black mb-4 tracking-tight leading-none">রয়্যালটি-ফ্রি চমৎকার সব স্টক ফটো</h2>
-            <p class="text-blue-100 text-base sm:text-lg mb-8 max-w-xl mx-auto">আপনার পরবর্তী প্রজেক্ট, ডিজাইন বা ওয়েবসাইটের জন্য একদম হাই-রেজোলিউশন ইমেজ সম্পূর্ণ বিনামূল্যে ডাউনলোড করুন।</p>
+            <h2 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">রয়্যালটি-ফ্রি চমৎকার সব স্টক ফটো</h2>
+            <p class="text-indigo-100 text-lg">আপনার পরবর্তী প্রজেক্ট, ডিজাইন বা ওয়েবসাইটের জন্য একদম হাই-রেজোলিউশন ইমেজ সম্পূর্ণ বিনামূল্যে ডাউনলোড করুন।</p>
         </div>
     </section>
 
-    <!-- ফটো গ্যালারি গ্রিড -->
-    <main class="max-w-6xl mx-auto px-4 py-16">
-        <div id="gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            <!-- ছবিগুলো জাভাস্ক্রিপ্ট দিয়ে গিটহাব থেকে এখানে এসে সাজবে -->
-            <div id="loading" class="col-span-full py-12 flex flex-col items-center justify-center gap-3">
-                <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                <p class="text-slate-500 font-medium">ছবিগুলো লোড হচ্ছে...</p>
+    <!-- অ্যাডমিন প্যানেল (লুকানো থাকবে, বাটনে চাপলে আসবে) -->
+    <div id="adminPanel" class="hidden max-w-2xl mx-auto my-8 p-6 bg-white rounded-2xl shadow-lg border border-slate-100 mx-4">
+        <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">📸 নতুন ছবি যোগ করুন</h3>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-600 mb-1">ছবির শিরোনাম (Title)</label>
+                <input type="text" id="imgTitle" placeholder="যেমন: সুন্দর সুন্দর ফুল" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-600 mb-1">ইমেজ ইউআরএল (Image URL)</label>
+                <input type="text" id="imgUrl" placeholder="https://images.unsplash.com/photo-..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <p class="text-xs text-slate-400 mt-1">Unsplash, Pexels বা যেকোনো লাইভ ছবির লিংক এখানে পেস্ট করুন।</p>
+            </div>
+            <button onclick="addNewImage()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition shadow-md">
+                সাইটে পাবলিশ করুন ✨
+            </button>
+        </div>
+    </div>
+
+    <!-- গ্যালারি সেকশন -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div id="imageGallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- জাভাস্ক্রিপ্ট দিয়ে এখানে ছবি লোড হবে -->
+        </div>
+        
+        <!-- যদি কোনো ছবি না থাকে তার জন্য নোটিশ -->
+        <div id="emptyState" class="text-center py-16 hidden">
+            <p class="text-slate-400 text-lg">এখনো কোনো ছবি আপলোড করা হয়নি। অ্যাডমিন প্যানেল থেকে প্রথম ছবি যোগ করুন!</p>
         </div>
     </main>
 
     <!-- ফুটার -->
-    <footer class="bg-white border-t border-slate-100 py-8 mt-20 text-center">
-        <p class="text-sm text-slate-500">© 2026 Prime Stock. All rights reserved.</p>
+    <footer class="bg-white border-t border-slate-100 py-6 text-center text-sm text-slate-400 mt-20">
+        <p>&copy; 2026 Prime Stock. All rights reserved.</p>
     </footer>
 
-    <!-- গিটহাব API থেকে ছবি আনার স্ক্রিপ্ট -->
+    <!-- মূল লজিক স্ক্রিপ্ট -->
     <script>
-        // আপনার গিটহাব অ্যাকাউন্ট অনুযায়ী ডেটা
-        const githubUser = "JamalChoudhuri";
-        const repoName = "Prime-Stock"; 
+        // ডিফল্ট কিছু ডেমো ডাটা (যাতে সাইট খালি না দেখায়)
+        let defaultImages = [
+            { id: 1, title: "প্রকৃতির সৌন্দর্য", url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80" },
+            { id: 2, title: "স্মার্ট সিটি নাইট", url: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80" }
+        ];
 
-        async function loadPrimeStockPhotos() {
-            const gallery = document.getElementById('gallery');
-            const loading = document.getElementById('loading');
-            
-            try {
-                // গিটহাব রিপোজিটরির images ফোল্ডারের ফাইল লিস্ট নিয়ে আসা হচ্ছে
-                const response = await fetch(`https://api.github.com/repos/${githubUser}/${repoName}/contents/images`);
-                
-                if (!response.ok) {
-                    throw new Error("ফোল্ডারটি এখনও তৈরি করা হয়নি বা খালি রয়েছে।");
-                }
-                
-                const files = await response.json();
-                loading.style.display = 'none';
+        // লোকাল স্টোরেজ থেকে ডাটা নেওয়া বা ডিফল্ট ডাটা সেট করা
+        let images = JSON.parse(localStorage.getItem('prime_stock_images')) || defaultImages;
 
-                // শুধু ইমেজ ফাইলগুলো ফিল্টার করে নিচ্ছি
-                const images = files.filter(file => file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i));
+        // অ্যাডমিন প্যানেল হাইড/শো করা
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.classList.toggle('hidden');
+        }
 
-                if (images.length === 0) {
-                    gallery.innerHTML = `
-                        <div class="col-span-full text-center py-12">
-                            <p class="text-slate-500 text-lg mb-4">আপনার গ্যালারিতে এখনও কোনো ছবি নেই!</p>
-                            <a href="/admin/" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-lg transition">প্রথম ছবি আপলোড করুন</a>
-                        </div>
-                    `;
-                    return;
-                }
+        // গ্যালারিতে ছবি রেন্ডার করা
+        function renderGallery() {
+            const gallery = document.getElementById('imageGallery');
+            const emptyState = document.getElementById('emptyState');
+            gallery.innerHTML = '';
 
-                // ছবিগুলো ওয়েবসাইটে সাজানো হচ্ছে
-                images.forEach(file => {
-                    const imageUrl = file.download_url;
-                    const card = document.createElement('div');
-                    card.className = "bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition duration-300 flex flex-col";
-                    
-                    card.innerHTML = `
-                        <div class="relative overflow-hidden group aspect-[4/3] bg-slate-100">
-                            <img src="${imageUrl}" alt="${file.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
-                        </div>
-                        <div class="p-5 flex items-center justify-between mt-auto">
-                            <span class="text-sm font-semibold text-slate-600 truncate max-w-[150px]" title="${file.name}">
-                                ${file.name.split('.')[0]}
-                            </span>
-                            <a href="${imageUrl}" download target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 px-5 rounded-xl transition shadow-sm hover:shadow">
-                                ডাউনলোড
+            if (images.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            images.forEach((img, index) => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 border border-slate-100 flex flex-col";
+                card.innerHTML = `
+                    <div class="relative group overflow-hidden bg-slate-100 aspect-[4/3]">
+                        <img src="${img.url}" alt="${img.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
+                    </div>
+                    <div class="p-4 flex flex-col flex-grow justify-between">
+                        <h4 class="font-bold text-slate-700 text-base mb-3 line-clamp-1">${img.title}</h4>
+                        <div class="flex gap-2">
+                            <a href="${img.url}" target="_blank" download class="flex-1 text-center bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-2 px-4 rounded-xl transition text-sm flex items-center justify-center gap-1">
+                                ⬇️ ডাউনলোড
                             </a>
+                            <button onclick="deleteImage(${index})" class="bg-red-50 hover:bg-red-100 text-red-500 p-2 rounded-xl transition text-sm" title="ডিলিট করুন">
+                                🗑️
+                            </button>
                         </div>
-                    `;
-                    gallery.appendChild(card);
-                });
-
-            } catch (error) {
-                loading.innerHTML = `
-                    <p class="text-red-500 font-medium">ছবি লোড করা যায়নি।</p>
-                    <p class="text-xs text-slate-400">নিশ্চিত করুন আপনার রিপোজিটরিতে "images" নামে একটি ফোল্ডার আছে এবং তাতে ছবি আপলোড করা হয়েছে।</p>
+                    </div>
                 `;
-                console.error(error);
+                gallery.appendChild(card);
+            });
+        }
+
+        // নতুন ছবি যোগ করা
+        function addNewImage() {
+            const titleInput = document.getElementById('imgTitle');
+            const urlInput = document.getElementById('imgUrl');
+
+            if (!titleInput.value || !urlInput.value) {
+                alert('দয়া করে শিরোনাম এবং ছবির সঠিক লিংক দুটিই দিন!');
+                return;
+            }
+
+            const newImg = {
+                id: Date.now(),
+                title: titleInput.value,
+                url: urlInput.value
+            };
+
+            images.unshift(newImg); // একদম শুরুতে নতুন ছবি দেখাবে
+            localStorage.setItem('prime_stock_images', JSON.stringify(images));
+            
+            // ইনপুট রিসেট ও গ্যালারি রিফ্রেশ
+            titleInput.value = '';
+            urlInput.value = '';
+            renderGallery();
+            
+            // সেলিব্রেশন অ্যানিমেশন!
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+
+        // ছবি ডিলিট করা
+        function deleteImage(index) {
+            if (confirm('আপনি কি নিশ্চিত যে এই ছবিটি ডিলিট করতে চান?')) {
+                images.splice(index, 1);
+                localStorage.setItem('prime_stock_images', JSON.stringify(images));
+                renderGallery();
             }
         }
 
-        loadPrimeStockPhotos();
-        <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<script>
-  if (window.netlifyIdentity) {
-    window.netlifyIdentity.on("init", user => {
-      if (!user) {
-        window.netlifyIdentity.on("login", () => {
-          document.location.href = "/admin/";
-        });
-      }
-    });
-  }
-</script>
+        // প্রথমবার পেজ লোড হলে গ্যালারি দেখানো
+        renderGallery();
     </script>
 </body>
 </html>
