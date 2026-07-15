@@ -7,24 +7,47 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* মেসনরি লেআউটের জন্য কাস্টম স্টাইল (ছবির সাইজ অনুযায়ী জায়গা নেবে) */
-        .masonry-gallery {
-            column-count: 1;
-            column-gap: 1.5rem;
+        /* এলোমেলো এবং রেশিও অনুযায়ী জায়গা নেওয়ার জন্য চমৎকার গ্যালারি স্টাইল */
+        .flex-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
         }
-        @media (min-width: 640px) { .masonry-gallery { column-count: 2; } }
-        @media (min-width: 768px) { .masonry-gallery { column-count: 3; } }
-        @media (min-width: 1024px) { .masonry-gallery { column-count: 4; } }
-        
-        .masonry-item {
-            break-inside: avoid;
-            margin-bottom: 1.5rem;
+
+        .gallery-item {
+            height: 300px; /* প্রতিটি সারির স্ট্যান্ডার্ড হাইট */
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #f1f5f9;
+        }
+
+        /* ছবির উইডথ তার নিজস্ব রেশিও (Aspect Ratio) অনুযায়ী অটোমেটিক সেট হবে */
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* মোবাইল স্ক্রিনের জন্য অ্যাডজাস্টমেন্ট */
+        @media (max-width: 640px) {
+            .gallery-item {
+                height: 200px;
+            }
         }
     </style>
 </head>
 <body class="bg-slate-50 font-sans text-slate-800">
 
-    <!-- হেডার/নেভিগেশন -->
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <h1 class="text-2xl font-black text-blue-600 tracking-tight">PrimeStock</h1>
@@ -34,7 +57,6 @@
         </div>
     </header>
 
-    <!-- হিরো সেকশন -->
     <section class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white text-center py-20 px-4">
         <div class="max-w-3xl mx-auto">
             <h2 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">রয়্যালটি-ফ্রি চমৎকার সব স্টক ফটো</h2>
@@ -42,18 +64,13 @@
         </div>
     </section>
 
-    <!-- অ্যাডমিন প্যানেল (লক করা থাকবে) -->
     <div id="adminPanel" class="hidden max-w-2xl mx-auto my-8 p-6 bg-white rounded-2xl shadow-lg border border-slate-100 mx-4">
         <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">📸 নতুন ছবি যোগ করুন</h3>
         <div class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-slate-600 mb-1">ছবির শিরোনাম (Title)</label>
-                <input type="text" id="imgTitle" placeholder="যেমন: সুন্দর সুন্দর ফুল" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            <div>
                 <label class="block text-sm font-medium text-slate-600 mb-1">ইমেজ ডিরেক্ট ইউআরএল (Image URL)</label>
                 <input type="text" id="imgUrl" placeholder="https://i.ibb.co/..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <p class="text-xs text-slate-400 mt-1">ImgBB বা অন্য সাইট থেকে নেওয়া ডিরেক্ট লিংক (শেষে .jpg/.png) পেস্ট করুন।</p>
+                <p class="text-xs text-slate-400 mt-1">ImgBB বা অন্য সাইট থেকে নেওয়া ডিরেক্ট লিংক (শেষে .jpg/.png) পেস্ট করুন। লিংক থেকেই অটোমেটিক টাইটেল তৈরি হবে!</p>
             </div>
             <button onclick="addNewImage()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition shadow-md">
                 সাইটে পাবলিশ করুন ✨
@@ -61,29 +78,26 @@
         </div>
     </div>
 
-    <!-- গ্যালারি সেকশন -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div id="imageGallery" class="masonry-gallery">
-            <!-- জাভাস্ক্রিপ্ট দিয়ে ছবি লোড হবে -->
-        </div>
+        <div id="imageGallery" class="flex-gallery">
+            </div>
         
         <div id="emptyState" class="text-center py-16 hidden">
             <p class="text-slate-400 text-lg">এখনো কোনো ছবি আপলোড করা হয়নি। অ্যাডমিন প্যানেল থেকে প্রথম ছবি যোগ করুন!</p>
         </div>
     </main>
 
-    <!-- ফুটার -->
     <footer class="bg-white border-t border-slate-100 py-6 text-center text-sm text-slate-400 mt-20">
         <p>&copy; 2026 Prime Stock. All rights reserved.</p>
     </footer>
 
-    <!-- মূল লজিক স্ক্রিপ্ট -->
     <script>
-        // ডেমো ছবি (সাইজ ভিন্ন ভিন্ন বোঝানোর জন্য আলাদা আলাদা আসপেক্ট রেশিও রাখা হয়েছে)
+        // ডেমো ছবি
         let defaultImages = [
-            { id: 1, title: "প্রকৃতির সৌন্দর্য", url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80" },
-            { id: 2, title: "স্মার্ট সিটি নাইট (লম্বা ছবি)", url: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=120" },
-            { id: 3, title: "কফি মগ", url: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&auto=format&fit=crop" }
+            { id: 1, title: "Nature View", url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80" },
+            { id: 2, title: "Smart City", url: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1200&q=80" },
+            { id: 3, title: "Coffee Break", url: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&auto=format&fit=crop" },
+            { id: 4, title: "Red Rose", url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop" }
         ];
 
         let images = JSON.parse(localStorage.getItem('prime_stock_images')) || defaultImages;
@@ -127,23 +141,31 @@
             }
 
             images.forEach((img, index) => {
+                // প্রতিটি ছবির জন্য একটি কন্টেইনার তৈরি করা হচ্ছে
                 const card = document.createElement('div');
-                card.className = "masonry-item bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 border border-slate-100 relative group";
+                card.className = "gallery-item group";
                 
-                // এডমিন লগইন থাকলে ছবির ওপরে একটি ডিলিট বাটন শো করবে
+                // ইমেজ এলিমেন্ট তৈরি করা হচ্ছে যাতে ওটা লোড হওয়ার পর তার রেশিও অনুযায়ী উইডথ সেট করা যায়
+                const tempImg = new Image();
+                tempImg.src = img.url;
+                tempImg.onload = function() {
+                    // ছবির অরিজিনাল রেশিও হিসাব করা হচ্ছে
+                    const aspectRatio = this.width / this.height;
+                    // রেশিও অনুযায়ী ডাইনামিকভাবে ফ্লেক্স-গ্রো সেট করা হচ্ছে
+                    card.style.flexBasis = (300 * aspectRatio) + "px";
+                    card.style.flexGrow = aspectRatio;
+                };
+
                 const deleteButtonHTML = isAdminLoggedIn 
                     ? `<button onclick="event.preventDefault(); event.stopPropagation(); deleteImage(${index})" class="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white p-2.5 rounded-xl transition shadow-md z-10" title="ডিলিট করুন">🗑️</button>`
                     : '';
 
-                // কার্ডের ওপর ক্লিক করলে সরাসরি নতুন ট্যাবে মূল ছবি ওপেন হবে (কোনো ডাউনলোড বাটন ছাড়া)
                 card.innerHTML = `
-                    <a href="${img.url}" target="_blank" class="block w-full h-full cursor-zoom-in">
+                    <a href="${img.url}" target="_blank" class="block w-full h-full cursor-zoom-in relative">
                         ${deleteButtonHTML}
-                        <div class="overflow-hidden bg-slate-100">
-                            <img src="${img.url}" alt="${img.title}" class="w-full h-auto object-cover group-hover:scale-[1.02] transition duration-300" loading="lazy">
-                        </div>
-                        <div class="p-4 bg-white">
-                            <h4 class="font-bold text-slate-700 text-sm line-clamp-1">${img.title}</h4>
+                        <img src="${img.url}" alt="${img.title}" class="group-hover:scale-[1.03]" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                            <span class="text-white font-bold text-sm capitalize">${img.title}</span>
                         </div>
                     </a>
                 `;
@@ -151,27 +173,43 @@
             });
         }
 
+        // লিংক থেকে অটোমেটিক সুন্দর টাইটেল বের করার ফাংশন
+        function generateTitleFromUrl(url) {
+            try {
+                let filename = url.substring(url.lastIndexOf('/') + 1);
+                filename = filename.split('?')[0];
+                let title = filename.replace(/\.[^/.]+$/, "");
+                title = title.replace(/[-_]/g, " ");
+                if (!title || title.trim().length < 2) {
+                    return "Prime Stock Photo";
+                }
+                return decodeURIComponent(title);
+            } catch (e) {
+                return "Prime Stock Photo";
+            }
+        }
+
         function addNewImage() {
             if (!isAdminLoggedIn) return;
 
-            const titleInput = document.getElementById('imgTitle');
             const urlInput = document.getElementById('imgUrl');
 
-            if (!titleInput.value || !urlInput.value) {
-                alert('দয়া করে শিরোনাম এবং ছবির সঠিক ডিরেক্ট লিংক দিন!');
+            if (!urlInput.value) {
+                alert('দয়া করে ছবির সঠিক ডিরেক্ট লিংক দিন!');
                 return;
             }
 
+            const autoTitle = generateTitleFromUrl(urlInput.value);
+
             const newImg = {
                 id: Date.now(),
-                title: titleInput.value,
+                title: autoTitle,
                 url: urlInput.value
             };
 
             images.unshift(newImg);
             localStorage.setItem('prime_stock_images', JSON.stringify(images));
             
-            titleInput.value = '';
             urlInput.value = '';
             renderGallery();
             
