@@ -4,28 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Prime Stock - Admin Dashboard</title>
-    <!-- Netlify Identity Widget -->
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-</head>
-<body class="bg-slate-100 flex items-center justify-center min-h-screen font-sans">
-
-    <div class="bg-white p-8 rounded-2xl shadow-md text-center max-w-sm w-full mx-4">
-        <h2 class="text-2xl font-bold text-slate-800 mb-2">Prime Stock Admin</h2>
-        <p class="text-sm text-slate-500 mb-6">আপনার ড্যাশবোর্ডে লগইন বা পাসওয়ার্ড সেট করতে নিচের বাটনে ক্লিক করুন।</p>
-        
-        <!-- এই বাটনটি চাপলে সরাসরি লগইন/পাসওয়ার্ড সেট করার বক্স চলে আসবে -->
-        <div data-netlify-identity-button class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition cursor-pointer shadow-md">
-            লগইন / পাসওয়ার্ড সেট করুন
-        </div>
-    </div>
-
     <!-- Decap CMS CSS/JS Library -->
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-    <script>
-        // লগইন সফল হলে ড্যাশবোর্ড লোড হবে
-        window.netlifyIdentity.on("login", () => {
-            document.location.reload();
-        });
-    </script>
+</head>
+<body>
 </body>
 </html>
