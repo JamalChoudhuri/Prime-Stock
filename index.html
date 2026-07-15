@@ -65,7 +65,7 @@
 
     <!-- মূল লজিক স্ক্রিপ্ট -->
     <script>
-        // ডিফল্ট কিছু ডেমো ডাটা (যাতে সাইট খালি না দেখায়)
+       // ডিফল্ট কিছু ডেমো ডাটা (যাতে সাইট খালি না দেখায়)
         let defaultImages = [
             { id: 1, title: "প্রকৃতির সৌন্দর্য", url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80" },
             { id: 2, title: "স্মার্ট সিটি নাইট", url: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80" }
@@ -74,10 +74,37 @@
         // লোকাল স্টোরেজ থেকে ডাটা নেওয়া বা ডিফল্ট ডাটা সেট করা
         let images = JSON.parse(localStorage.getItem('prime_stock_images')) || defaultImages;
 
-        // অ্যাডমিন প্যানেল হাইড/শো করা
+        // অ্যাডমিন প্যানেল লক ও আনলক লজিক
+        let isAdminLoggedIn = sessionStorage.getItem('isAdminLoggedIn') === 'true';
+
         function toggleAdminPanel() {
             const panel = document.getElementById('adminPanel');
-            panel.classList.toggle('hidden');
+            
+            // যদি আগে থেকেই লগইন করা থাকে
+            if (isAdminLoggedIn) {
+                panel.classList.toggle('hidden');
+                return;
+            }
+
+            // প্রথমবার প্যানেলে ঢুকতে গেলে ইউজার আইডি চাইবে
+            const userId = prompt("অ্যাডমিন প্যানেলে প্রবেশ করতে ইউজার আইডি (User ID) দিন:");
+            
+            if (userId === "1502061267") {
+                // ইউজার আইডি মিললে পাসওয়ার্ড চাইবে
+                const password = prompt("এবার আপনার গোপন পাসওয়ার্ড (Password) দিন:");
+                
+                if (password === "6691Ja") { 
+                    isAdminLoggedIn = true;
+                    sessionStorage.setItem('isAdminLoggedIn', 'true'); // ব্রাউজার ট্যাব বন্ধ না হওয়া পর্যন্ত লগইন থাকবে
+                    panel.classList.remove('hidden');
+                    alert("স্বাগতম ভাই! আপনি সফলভাবে অ্যাডমিন হিসেবে প্রবেশ করেছেন।");
+                    renderGallery(); // ডিলিট বাটনসহ গ্যালারি রিফ্রেশ হবে
+                } else {
+                    alert("ভুল পাসওয়ার্ড! আপনি এই প্যানেলটি ব্যবহারের অনুমতি পাননি।");
+                }
+            } else {
+                alert("ভুল ইউজার আইডি! আবার চেষ্টা করুন।");
+            }
         }
 
         // গ্যালারিতে ছবি রেন্ডার করা
@@ -96,6 +123,12 @@
             images.forEach((img, index) => {
                 const card = document.createElement('div');
                 card.className = "bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition duration-300 border border-slate-100 flex flex-col";
+                
+                // যদি এডমিন লগইন থাকে তবেই ডিলিট বাটন দেখাবে
+                const deleteButtonHTML = isAdminLoggedIn 
+                    ? `<button onclick="deleteImage(${index})" class="bg-red-50 hover:bg-red-100 text-red-500 p-2 rounded-xl transition text-sm" title="ডিলিট করুন">🗑️</button>`
+                    : '';
+
                 card.innerHTML = `
                     <div class="relative group overflow-hidden bg-slate-100 aspect-[4/3]">
                         <img src="${img.url}" alt="${img.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
@@ -106,9 +139,7 @@
                             <a href="${img.url}" target="_blank" download class="flex-1 text-center bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-2 px-4 rounded-xl transition text-sm flex items-center justify-center gap-1">
                                 ⬇️ ডাউনলোড
                             </a>
-                            <button onclick="deleteImage(${index})" class="bg-red-50 hover:bg-red-100 text-red-500 p-2 rounded-xl transition text-sm" title="ডিলিট করুন">
-                                🗑️
-                            </button>
+                            ${deleteButtonHTML}
                         </div>
                     </div>
                 `;
@@ -118,6 +149,11 @@
 
         // নতুন ছবি যোগ করা
         function addNewImage() {
+            if (!isAdminLoggedIn) {
+                alert("দুঃখিত, ছবি আপলোড করতে আগে লগইন করুন!");
+                return;
+            }
+
             const titleInput = document.getElementById('imgTitle');
             const urlInput = document.getElementById('imgUrl');
 
@@ -132,20 +168,20 @@
                 url: urlInput.value
             };
 
-            images.unshift(newImg); // একদম শুরুতে নতুন ছবি দেখাবে
+            images.unshift(newImg);
             localStorage.setItem('prime_stock_images', JSON.stringify(images));
             
-            // ইনপুট রিসেট ও গ্যালারি রিফ্রেশ
             titleInput.value = '';
             urlInput.value = '';
             renderGallery();
             
-            // সেলিব্রেশন অ্যানিমেশন!
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
         }
 
         // ছবি ডিলিট করা
         function deleteImage(index) {
+            if (!isAdminLoggedIn) return;
+            
             if (confirm('আপনি কি নিশ্চিত যে এই ছবিটি ডিলিট করতে চান?')) {
                 images.splice(index, 1);
                 localStorage.setItem('prime_stock_images', JSON.stringify(images));
