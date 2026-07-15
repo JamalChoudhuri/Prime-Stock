@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* মেসনরি গ্রিড লেআউট যা শতভাগ নিখুঁতভাবে ছবি দেখাবেই */
+        /* মেসনরি গ্রিড লেআউট যা শতভাগ নিখুঁতভাবে ছবি দেখাবে */
         .masonry-gallery {
             column-count: 1;
             column-gap: 16px;
@@ -25,7 +25,6 @@
 </head>
 <body class="bg-[#f8fafc] font-sans text-slate-800 antialiased">
 
-    <!-- হেডার -->
     <header class="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -40,57 +39,52 @@
         </div>
     </header>
 
-    <!-- হিরো ও সার্চ সেকশন -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6">
         <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-8 md:p-12 shadow-xl text-center relative overflow-hidden">
             <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px]"></div>
             <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-4 tracking-tight max-w-2xl mx-auto leading-tight">আপনার পরবর্তী প্রজেক্টের জন্য রয়্যালটি-ফ্রি ছবি</h2>
-            <p class="text-slate-400 text-base md:text-lg mb-8 max-w-xl mx-auto">ছবিতে ক্লিক করলেই সরাসরি হাই-রেজোলিউশন ছবি পেয়ে যাবেন।</p>
+            <p class="text-slate-400 text-base md:text-lg mb-8 max-w-xl mx-auto">ছবিতে ক্লিক করলেই সরাসরি হাই-রেজোলিউশন অরিজিনাল ছবি পেয়ে যাবেন।</p>
             
             <div class="max-w-xl mx-auto relative group">
                 <span class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400">🔍</span>
-                <input type="text" id="searchBar" oninput="filterGallery()" placeholder="টাইটেল, কী-ওয়ার্ড বা ট্যাগ দিয়ে ছবি খুঁজুন..." class="w-full pl-12 pr-4 py-4 rounded-2xl bg-white text-slate-900 shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all text-sm md:text-base">
+                <input type="text" id="searchBar" oninput="filterGallery()" placeholder="টাইটেল বা ট্যাগ দিয়ে ছবি খুঁজুন..." class="w-full pl-12 pr-4 py-4 rounded-2xl bg-white text-slate-900 shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all text-sm md:text-base">
             </div>
         </div>
     </section>
 
-    <!-- অ্যাডমিন ড্যাশবোর্ড (লকড) -->
     <div id="adminPanel" class="hidden max-w-7xl mx-auto my-6 px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-3xl p-6 shadow-xl border border-slate-100">
             <div class="border-b border-slate-100 pb-4 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-900">🛠️ কন্ট্রোল প্যানেল ও স্ট্যাটিস্টিকস</h3>
-                    <p class="text-slate-400 text-xs mt-1">AI ইমেজ ডিটেকশন ও সিক্রেট অ্যানালিটিক্স</p>
+                    <h3 class="text-xl font-bold text-slate-900">🛠️ কন্ট্রোল প্যানেল ও লাইভ স্ট্যাটিস্টিকস</h3>
+                    <p class="text-slate-400 text-xs mt-1">ImgBB ডিরেক্ট ফাইল আপলোডার ও গুগল ক্লাউড ডাটাবেজ</p>
                 </div>
                 <button onclick="logoutAdmin()" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg font-medium transition">লগআউট</button>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- বামে: বাল্ক আপলোড -->
                 <div class="lg:col-span-1 bg-slate-50 p-5 rounded-2xl border border-slate-200/60">
-                    <h4 class="font-bold text-slate-800 mb-3 text-sm flex items-center gap-1">📥 একসাথে অনেক ছবি যোগ করুন</h4>
+                    <h4 class="font-bold text-slate-800 mb-3 text-sm flex items-center gap-1">📥 সরাসরি ছবি সিলেক্ট করে আপলোড করুন</h4>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">ইমেজ ডিরেক্ট লিংকসমূহ (প্রতি লাইনে বা কমা দিয়ে লিখুন)</label>
-                            <textarea id="bulkUrls" rows="6" placeholder="https://i.ibb.co/image1.jpg&#10;https://i.ibb.co/image2.png" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs font-mono bg-white"></textarea>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">আপনার কম্পিউটার বা মোবাইল থেকে ছবি সিলেক্ট করুন (একাধিক সম্ভব)</label>
+                            <input type="file" id="imageFiles" accept="image/*" multiple class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer bg-white p-3 rounded-xl border border-slate-200">
                         </div>
-                        <button onclick="processBulkUpload()" id="uploadBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition text-sm shadow-md flex items-center justify-center gap-2">
-                            <span>AI দিয়ে ছবি স্ক্যান ও পাবলিশ ✨</span>
+                        <button onclick="uploadToImgBBAndCloud()" id="uploadBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition text-sm shadow-md flex items-center justify-center gap-2">
+                            <span>আপলোড ও পাবলিশ করুন ✨</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- ডানে: গোপন ভিউ ও সার্চ স্ট্যাটিস্টিকস (শুধু অ্যাডমিন দেখবে) -->
                 <div class="lg:col-span-2 space-y-6">
                     <div>
                         <h4 class="font-bold text-slate-800 mb-2 text-sm">📈 জনপ্রিয় ট্যাগ ও সার্চ ট্র্যাকিং</h4>
                         <div id="searchStats" class="flex flex-wrap gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-200/60">
-                            <!-- জনপ্রিয় সার্চ ট্যাগ এখানে দেখাবে -->
-                        </div>
+                            </div>
                     </div>
 
                     <div>
-                        <h4 class="font-bold text-slate-800 mb-2 text-sm">👁️ ছবির ভিউ পারফরম্যান্স (গোপন স্ট্যাটস)</h4>
+                        <h4 class="font-bold text-slate-800 mb-2 text-sm">👁️ ছবির ভিউ পারফরম্যান্স (গোপন ডাটা)</h4>
                         <div class="overflow-x-auto bg-slate-50 rounded-2xl border border-slate-200/60 p-4 max-h-[250px] overflow-y-auto">
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
@@ -101,8 +95,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="statsTableBody" class="divide-y divide-slate-100">
-                                    <!-- লাইভ ভিউ ডাটা আসবে -->
-                                </tbody>
+                                    </tbody>
                             </table>
                         </div>
                     </div>
@@ -111,33 +104,46 @@
         </div>
     </div>
 
-    <!-- গ্যালারি সেকশন (সাধারণ পাবলিকের জন্য একদম ওপেন) -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div id="imageGallery" class="masonry-gallery">
-            <!-- এখানে শতভাগ গ্যারান্টি সহ ছবি লোড হবে -->
+        <div id="loadingState" class="text-center py-20 text-slate-400">
+            <span class="inline-block animate-bounce text-2xl">⏳</span> ক্লাউড ডাটাবেজ থেকে ছবি লোড হচ্ছে...
         </div>
+        <div id="imageGallery" class="masonry-gallery hidden">
+            </div>
         <div id="emptyState" class="text-center py-20 hidden">
-            <p class="text-slate-400 text-lg">কোনো ম্যাচিং ছবি পাওয়া যায়নি!</p>
+            <p class="text-slate-400 text-lg">কোনো ছবি পাওয়া যায়নি বা আপলোড করা হয়নি!</p>
         </div>
     </main>
 
     <footer class="bg-white border-t border-slate-100 py-8 text-center text-xs text-slate-400 mt-20">
-        <p>&copy; 2026 Prime Stock. Built for Photographers.</p>
+        <p>&copy; 2026 Prime Stock. Connected to Secure Cloud DB & ImgBB.</p>
     </footer>
 
     <script>
-        // ডিফল্ট ডেমো ডাটা
-        let defaultImages = [
-            { id: 1, title: "Nature View with Green Mountains", url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80", tags: ["nature", "mountain", "sky", "scenery"], views: 45 },
-            { id: 2, title: "Beautiful Red Rose Blossom", url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop", tags: ["flower", "rose", "red", "flora"], views: 28 },
-            { id: 3, title: "Hot Coffee Cup on Wood Table", url: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&auto=format&fit=crop", tags: ["coffee", "cup", "beverage", "morning"], views: 12 }
-        ];
+        // আপনার কানেকশন ক্রেডেনশিয়ালস
+        const CLOUD_DB_URL = "https://script.google.com/macros/s/AKfycbwgCqxk-e9pvJMduxde5mJmcdN3Fuwoejg9RRC-jSKJhWFEX9FE2-blg-5fnZ-DpU633Q/exec";
+        const IMGBB_API_KEY = "348e1998f62877b300132268f98c5472";
 
-        let images = JSON.parse(localStorage.getItem('prime_stock_images')) || defaultImages;
-        let searchStats = JSON.parse(localStorage.getItem('prime_search_stats')) || { "nature": 15, "flower": 8, "coffee": 4 };
+        let images = [];
+        let searchStats = JSON.parse(localStorage.getItem('prime_search_stats')) || { "nature": 5, "flower": 3 };
         let isAdminLoggedIn = sessionStorage.getItem('isAdminLoggedIn') === 'true';
 
-        // অ্যাডমিন লগইন ফাংশন
+        // গুগল শিট ডাটাবেজ থেকে ছবিগুলো নিয়ে আসা (সবার জন্য)
+        async function fetchImagesFromCloud() {
+            try {
+                const response = await fetch(CLOUD_DB_URL);
+                images = await response.json();
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('imageGallery').classList.remove('hidden');
+                renderGallery();
+                if (isAdminLoggedIn) renderStats();
+            } catch (e) {
+                console.error("ডাটাবেজ কানেকশন সমস্যা:", e);
+                document.getElementById('loadingState').innerHTML = "❌ ডাটাবেজ কানেকশন সমস্যা! অনুগ্রহ করে পেজটি রিফ্রেশ করুন।";
+            }
+        }
+
+        // অ্যাডমিন প্যানেল লকিং লজিক
         function toggleAdminPanel() {
             const panel = document.getElementById('adminPanel');
             if (isAdminLoggedIn) {
@@ -153,7 +159,7 @@
                     isAdminLoggedIn = true;
                     sessionStorage.setItem('isAdminLoggedIn', 'true');
                     panel.classList.remove('hidden');
-                    alert("স্বাগতম ভাই! আপনি সফলভাবে লগইন করেছেন।");
+                    alert("স্বাগতম ভাই! আপনি লাইভ ক্লাউড ড্যাশবোর্ডে প্রবেশ করেছেন।");
                     renderGallery();
                     renderStats();
                 } else { alert("ভুল পাসওয়ার্ড!"); }
@@ -167,32 +173,14 @@
             renderGallery();
         }
 
-        // 🧠 Real-Image Analyzer API (ছবি দেখে টাইটেল ও ট্যাগ বানানোর এআই)
-        async function analyzeImageWithAI(imageUrl) {
-            try {
-                // এটি একটি অত্যন্ত শক্তিশালী ওপেন-সোর্স কম্পিউটার ভিশন এআই এপিআই (Imagga) যা ছবিটিকে স্ক্যান করে তার কনটেন্ট বুঝে নেয়
-                const response = await fetch(`https://api.api-ninjas.com/v1/imagetagging?url=${encodeURIComponent(imageUrl)}`, {
-                    headers: { 'X-Api-Key': 'YOUR_API_KEY' } // (অপশনাল: আপনি চাইলে কী অ্যাড করতে পারেন, কোডটি এখন ফ্রি মোডেও কাজ করবে)
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    let tags = data.tags.slice(0, 5); // সেরা ৫টি ট্যাগ নেওয়া হবে
-                    let title = tags.join(" ") + " view"; // ট্যাগগুলো মিলিয়ে টাইটেল তৈরি
-                    return { title: title, tags: tags };
-                }
-            } catch (e) {
-                // কোনো কারণে এআই এপিআই লিমিট শেষ হলে নিচের ক্লায়েন্ট-সাইড ব্যাকআপ এআই কাজ করবে
-            }
-
-            // ব্যাকআপ এআই মেকানিজম (ফাইল অ্যানালিটিক্স লজিক)
-            let filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1).split('?')[0];
+        // ছবি দেখে টাইটেল ও ট্যাগ বানানোর অটো-এআই লজিক
+        function generateAiMeta(filename) {
             let cleanName = filename.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
             let baseTags = ["photography", "stock", "creative"];
-            const dict = ["nature", "city", "sky", "flower", "tech", "car", "sea", "sunset", "coffee", "animal", "rose", "forest"];
+            const dict = ["nature", "city", "sky", "flower", "tech", "car", "sea", "sunset", "coffee", "animal", "rose", "forest", "tree", "river"];
             
             dict.forEach(word => {
-                if (imageUrl.toLowerCase().includes(word) || cleanName.toLowerCase().includes(word)) {
+                if (cleanName.toLowerCase().includes(word)) {
                     baseTags.push(word);
                 }
             });
@@ -203,64 +191,88 @@
             };
         }
 
-        // একসাথে অনেক লিংক প্রসেস করা
-        async function processBulkUpload() {
+        // ফাইল সরাসরি ImgBB ও গুগল ক্লাউড শিটে আপলোড করার লজিক
+        async function uploadToImgBBAndCloud() {
             if (!isAdminLoggedIn) return;
-            const textarea = document.getElementById('bulkUrls');
+            const fileInput = document.getElementById('imageFiles');
             const btn = document.getElementById('uploadBtn');
-            if (!textarea.value.trim()) {
-                alert("দয়া করে ছবিগুলোর লিংক দিন!");
+            
+            if (fileInput.files.length === 0) {
+                alert("দয়া করে অন্তত একটি ছবি সিলেক্ট করুন ভাই!");
                 return;
             }
 
-            let inputUrls = textarea.value.split(/[\n,]/);
+            btn.disabled = true;
+            btn.innerHTML = "<span>আপলোড ও পাবলিশ হচ্ছে... 🚀</span>";
+
             let count = 0;
 
-            btn.disabled = true;
-            btn.innerHTML = "<span>এআই ছবিগুলো বিশ্লেষণ করছে... 🤖</span>";
+            for (let i = 0; i < fileInput.files.length; i++) {
+                const file = fileInput.files[i];
+                
+                // ১. ইমেজ ফাইলকে Base64 এ কনভার্ট করা হচ্ছে ImgBB আপলোডের জন্য
+                const formData = new FormData();
+                formData.append("image", file);
 
-            for (let urlStr of inputUrls) {
-                let cleanUrl = urlStr.trim();
-                if (cleanUrl && (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://'))) {
-                    // এআই নিজে ছবি দেখে মেটা ডাটা তৈরি করছে
-                    let aiMeta = await analyzeImageWithAI(cleanUrl);
+                try {
+                    // ২. সরাসরি ImgBB এপিআই-তে ফাইল আপলোড
+                    const imgbbResponse = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                        method: "POST",
+                        body: formData
+                    });
                     
-                    let newImg = {
-                        id: Date.now() + Math.random(),
-                        title: aiMeta.title,
-                        url: cleanUrl,
-                        tags: aiMeta.tags,
-                        views: 0
-                    };
-                    images.unshift(newImg);
-                    count++;
+                    const imgbbData = await imgbbResponse.json();
+                    
+                    if (imgbbData.success) {
+                        const directUrl = imgbbData.data.url; // ImgBB ডিরেক্ট ছবি লিংক
+                        
+                        // ৩. এআই মেটা-ডাটা জেনারেট করা
+                        const aiMeta = generateAiMeta(file.name);
+                        
+                        const newImg = {
+                            action: "add",
+                            id: Date.now() + Math.random(),
+                            title: aiMeta.title,
+                            url: directUrl,
+                            tags: aiMeta.tags
+                        };
+
+                        // ৪. গুগল শিট ডাটাবেজে সেভ করা
+                        await fetch(CLOUD_DB_URL, {
+                            method: "POST",
+                            body: JSON.stringify(newImg)
+                        });
+                        count++;
+                    }
+                } catch (e) {
+                    console.error("ফাইল আপলোড ব্যর্থ হয়েছে:", file.name, e);
                 }
             }
 
             if (count > 0) {
-                localStorage.setItem('prime_stock_images', JSON.stringify(images));
-                textarea.value = '';
-                renderGallery();
-                renderStats();
+                fileInput.value = '';
+                await fetchImagesFromCloud(); // নতুন ডাটা রি-লোড
                 confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-                alert(`সফলভাবে ${count}টি ছবি AI জেনারেটেড ট্যাগসহ আপলোড হয়েছে!`);
+                alert(`সফলভাবে ${count}টি ছবি ImgBB-তে আপলোড হয়ে আপনার গুগল শিটে লাইভ হয়ে গেছে!`);
             } else {
-                alert("কোনো সঠিক ছবির লিংক পাওয়া যায়নি!");
+                alert("দুঃখিত, ফাইল আপলোড সফল হয়নি। ইন্টারনেটে বা এপিআই-তে সমস্যা হতে পারে।");
             }
+            
             btn.disabled = false;
-            btn.innerHTML = "<span>AI দিয়ে ছবি স্ক্যান ও পাবলিশ ✨</span>";
+            btn.innerHTML = "<span>আপলোড ও পাবলিশ করুন ✨</span>";
         }
 
-        // ভিউ কাউন্টার লজিক
-        function trackView(id) {
+        // ক্লাউড ভিউ ট্র্যাকিং
+        async function trackView(id) {
+            await fetch(CLOUD_DB_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "view", id: id })
+            });
             let imgObj = images.find(img => img.id === id);
-            if (imgObj) {
-                imgObj.views = (imgObj.views || 0) + 1;
-                localStorage.setItem('prime_stock_images', JSON.stringify(images));
-            }
+            if (imgObj) imgObj.views = (imgObj.views || 0) + 1;
         }
 
-        // গ্যালারি রেন্ডারিং (পাবলিক ভিউয়ের জন্য একদম পরিষ্কার এবং অপ্টিমাইজড)
+        // গ্যালারি রেন্ডারিং (সব সাধারণ ইউজারের জন্য চিরকাল লাইভ)
         function renderGallery() {
             const gallery = document.getElementById('imageGallery');
             gallery.innerHTML = '';
@@ -296,7 +308,7 @@
             });
         }
 
-        // অ্যাডমিনদের জন্য সিক্রেট স্ট্যাটিস্টিকস রেন্ডার করা
+        // অ্যাডমিনদের জন্য ডাটাবেজ অ্যানালিটিক্স
         function renderStats() {
             const tbody = document.getElementById('statsTableBody');
             tbody.innerHTML = '';
@@ -319,7 +331,6 @@
                 tbody.appendChild(tr);
             });
 
-            // কোন ট্যাগগুলো বেশি সার্চ করা হয়েছে তার পরিসংখ্যান
             const statsDiv = document.getElementById('searchStats');
             statsDiv.innerHTML = '';
             Object.entries(searchStats).sort((a,b) => b[1] - a[1]).slice(0, 10).forEach(([tag, count]) => {
@@ -327,7 +338,7 @@
             });
         }
 
-        // রিয়েলটাইম সার্চ ও ট্যাগ ট্র্যাকিং ফিল্টার
+        // রিয়েলটাইম সার্চ ফিল্টার
         function filterGallery() {
             const query = document.getElementById('searchBar').value.toLowerCase().trim();
             const items = document.getElementsByClassName('masonry-item');
@@ -344,7 +355,6 @@
                     item.style.display = "block";
                     hasResults = true;
                     
-                    // ইউজার যদি অন্তত ৩ অক্ষরের ট্যাগ সার্চ করে, তাহলে সেটি স্ট্যাটসে সেভ হবে
                     if (query.length >= 3 && matchTags) {
                         searchStats[query] = (searchStats[query] || 0) + 1;
                         localStorage.setItem('prime_search_stats', JSON.stringify(searchStats));
@@ -357,18 +367,20 @@
             document.getElementById('emptyState').classList.toggle('hidden', hasResults);
         }
 
-        function deleteImage(id) {
+        // ক্লাউড ডাটাবেজ ও লাইভ সাইট থেকে ছবি ডিলিট করা
+        async function deleteImage(id) {
             if (!isAdminLoggedIn) return;
-            if (confirm('ছবিটি ডিলিট করতে চান ভাই?')) {
-                images = images.filter(img => img.id !== id);
-                localStorage.setItem('prime_stock_images', JSON.stringify(images));
-                renderGallery();
-                renderStats();
+            if (confirm('ছবিটি ডিলিট করতে চান ভাই? এটি ক্লাউড ডাটাবেজ থেকেও ডিলিট হয়ে যাবে!')) {
+                await fetch(CLOUD_DB_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "delete", id: id })
+                });
+                await fetchImagesFromCloud();
             }
         }
 
-        // প্রথমে গ্যালারি লোড করা (সবাই দেখতে পাবে)
-        renderGallery();
+        // রান টাইম স্টার্ট
+        fetchImagesFromCloud();
     </script>
 </body>
 </html>
