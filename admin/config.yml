@@ -1,0 +1,16 @@
+backend:
+  name: github
+  repo: JamalChoudhuri/Prime-Stock # সরাসরি আপনার গিটহাব লিংক কানেক্টেড
+  branch: main # আপনার গিটহাবের ডিফল্ট ব্রাঞ্চ
+
+media_folder: "images" # সব আপলোড করা ছবি আপনার গিটহাবের "images" ফোল্ডারে যাবে
+public_folder: "/images"
+
+collections:
+  - name: "photos"
+    label: "Prime Stock Photos"
+    folder: "images"
+    create: true
+    slug: "{{fields.image}}"
+    fields:
+      - { label: "ছবি সিলেক্ট করুন (Upload Image)", name: "image", widget: "image" }
